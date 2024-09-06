@@ -1,0 +1,1216 @@
+-- A new Table patient_details added into the system. 12/6/2024
+
+CREATE TABLE `patient_details` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+   `mrn_number` varchar(20) DEFAULT NULL,
+  `marital_status` enum('single','married','divorced','widowed') DEFAULT NULL,
+  `insurance_number` varchar(100) DEFAULT NULL,
+  `insurance_provider` varchar(255) DEFAULT NULL,
+  `cnic` varchar(15) DEFAULT NULL,
+  `cnic_file` text NOT NULL,
+  `insurance_card` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `created_by` int(11) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `patient_details`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `patient_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+
+---events table
+
+CREATE TABLE events (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255),
+    start_date DATE,
+    end_date DATE,
+    start_time TIME,
+    end_time TIME,
+    description TEXT,
+    created_by INT(11),
+    updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    updated_by INT(11),
+    PRIMARY KEY (id)
+);
+ALTER TABLE `patient_details` ADD `mrn_number` VARCHAR(20) NULL AFTER `user_id`;
+
+
+
+--A field added in patient details for additional files 13/6/2024'
+
+ALTER TABLE `patient_details` ADD `other_files` TEXT NULL DEFAULT NULL AFTER `insurance_card`;
+
+
+-- A new Table for files has been created. 13/6/24
+
+CREATE TABLE `files` (
+  `id` int(11) NOT NULL,
+  `table_name` varchar(255) NOT NULL,
+  `record_id` int(11) NOT NULL,
+  `record_type` varchar(100) DEFAULT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `files`
+  ADD PRIMARY KEY (`id`);
+--
+ALTER TABLE `files`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+
+--patient_details table file fields dropped.
+ALTER TABLE `patient_details` DROP `insurance_card`;
+ALTER TABLE `patient_details` DROP `insurancnic_file`;
+ALTER TABLE `patient_details` DROP `other_files`;
+
+
+
+...
+-- A new Table for files has been created. 13/6/24
+
+CREATE TABLE `user_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `record_id` int(11) DEFAULT NULL,
+  `table_name` varchar(100) NOT NULL,
+  `action` varchar(50) NOT NULL,
+  `field_name` varchar(100) DEFAULT NULL,
+  `old_value` longtext DEFAULT NULL,
+  `new_value` longtext DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `student_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ ---A new Table for notifications has been created. 14/6/24
+
+CREATE TABLE notifications (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    notification_from INT(11) NOT NULL,
+    notification_to INT(11) NOT NULL,
+    text VARCHAR(500) COLLATE utf8mb4_general_ci NOT NULL,
+    url VARCHAR(200) COLLATE utf8mb4_general_ci NOT NULL,
+    status VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'new',
+    created_at DATETIME DEFAULT NULL,
+    updated_at DATETIME DEFAULT NULL,
+    created_by INT(11) DEFAULT NULL,
+    updated_by INT(10) DEFAULT NULL
+);
+
+
+
+
+
+ALTER TABLE `patient_details` ADD `other_details` TEXT NULL DEFAULT NULL ;
+
+
+-- A new table blood_groups added to the db. 21/6/2024
+
+CREATE TABLE blood_groups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- A new table marital_statuses added to the db. 21/6/2024
+
+CREATE TABLE marital_statuses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
+---A new Table for labs has been created. 21/6/24
+
+
+
+CREATE TABLE labs (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    lab_number VARCHAR(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+    title VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    description TEXT COLLATE utf8mb4_general_ci DEFAULT NULL,
+    user_id VARCHAR(100) COLLATE utf8mb4_general_ci NOT NULL,
+    address VARCHAR(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+    phone_no VARCHAR(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_by INT(11) DEFAULT NULL,
+    updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT(11) DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
+
+
+-- A few changes made in the marital_statuses Table 21/6/2024
+
+ALTER TABLE marital_statuses ADD COLUMN status ENUM('0', '1') AFTER name;
+ALTER TABLE `marital_statuses` ADD `created_by` INT(10) NULL DEFAULT NULL AFTER `status`;
+ALTER TABLE `marital_statuses` ADD `updated_by` INT(10) NULL DEFAULT NULL AFTER `created_at`;
+
+
+-- A few changes made in the blood_groups Table 21/6/2024
+
+ALTER TABLE blood_groups ADD COLUMN status ENUM('0', '1') AFTER name;
+ALTER TABLE `blood_groups` ADD `created_by` INT(10) NULL DEFAULT NULL AFTER `status`;
+ALTER TABLE `blood_groups` ADD `updated_by` INT(10) NULL DEFAULT NULL AFTER `created_at`;
+
+-- A change made in the users Table Table 21/6/2024
+ALTER TABLE `users` CHANGE `blood_group` `blood_group` INT(10) NULL DEFAULT NULL;
+
+-- A change made in the patient_details Table Table 21/6/2024
+ALTER TABLE `patient_details` CHANGE `marital_status` `marital_status` INT(10) NULL DEFAULT NULL;
+
+--- Alter Table of labs has been updated_at. 21/6/24
+
+ALTER TABLE `labs` CHANGE `mrn_number` `lab_number` VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
+
+-- A new permission added in the permissions Table Table 21/6/2024
+
+INSERT INTO permissions (name, display_name, guard_name, created_at, updated_at)
+VALUES
+    ('blood-group-read', 'Blood Group', 'web', NOW(), NULL),
+    ('blood-group-create', 'Blood Group', 'web', NOW(), NULL),
+    ('blood-group-update', 'Blood Group', 'web', NOW(), NULL),
+    ('blood-group-delete', 'Blood Group', 'web', NOW(), NULL);
+
+-- A new permission added in the permissions Table Table 21/6/2024
+
+INSERT INTO permissions (name, display_name, guard_name, created_at, updated_at)
+VALUES
+    ('marital-status-read', 'Marital Status', 'web', NOW(), NULL),
+    ('marital-status-create', 'Marital Status', 'web', NOW(), NULL),
+    ('marital-status-update', 'Marital Status', 'web', NOW(), NULL),
+    ('marital-status-delete', 'Marital Status', 'web', NOW(), NULL);
+
+
+CREATE TABLE `appointment_status` (
+  `id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_by` int(10) DEFAULT NULL,
+  `updated_by` int(10) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+CREATE TABLE `dd_medical_histories` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `dd_medical_histories`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_medical_histories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+
+
+
+CREATE TABLE `dd_drug_histories` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `dd_drug_histories`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_drug_histories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+
+
+
+CREATE TABLE `dd_dental_histories` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `dd_dental_histories`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_dental_histories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+
+
+
+CREATE TABLE `dd_social_histories` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `dd_social_histories`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_social_histories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+
+CREATE TABLE `dd_investigations` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `dd_investigations`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_investigations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+
+
+
+CREATE TABLE `dd_treatment_plans` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `dd_treatment_plans`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_treatment_plans`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+--Categories Table 22-jun 2024
+
+CREATE TABLE dd_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT,
+    created_by INT,
+    status VARCHAR(20) DEFAULT 'active'
+);
+
+
+--subcategories Table 22-jun 2024
+
+CREATE TABLE dd_subcategories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT,
+    created_by INT,
+    status VARCHAR(20) DEFAULT 'active'
+);
+
+
+--items Table 22-jun 2024
+CREATE TABLE items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    subcategory_id INT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    item_code VARCHAR(50) UNIQUE,
+    quantity INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT,
+    created_by INT,
+    status VARCHAR(20) DEFAULT 'active'
+);
+
+
+--patient_teeths Table added to the DB 25/June/2024.
+
+CREATE TABLE patient_teeths (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  patient_id INT NULL,
+  doctor_id INT NULL,
+  tooth_number VARCHAR(10) NOT NULL,
+  tooth_issues TEXT NULL,
+  tooth_condition VARCHAR(50),
+  treatment_plan TEXT,
+  severity VARCHAR(20),
+  procedure_performed TEXT,
+  tooth_position VARCHAR(20),
+  status VARCHAR(20),
+  created_by INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_by INT NULL,
+  updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP);
+
+
+
+
+-- consultancey_fees Table added to the DB 26/June/2024.
+
+CREATE TABLE consultancey_fees (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    user_id INT(11) DEFAULT NULL,
+    date DATE NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    description TEXT COLLATE utf8mb4_general_ci DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+    updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    updated_by INT(11) DEFAULT NULL,
+    created_by INT(11) DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
+
+
+-- patient_medical_history Table added to the DB 26/June/2024.
+
+CREATE TABLE patient_medical_history (
+  id int(11) NOT NULL,
+  patient_id int(11) NOT NULL,
+  dd_medical_history_id int(11) DEFAULT NULL,
+  user_id int(11) DEFAULT NULL,
+  comments longtext DEFAULT NULL,
+  status enum('1','0') DEFAULT '1',
+  created_by int(11) DEFAULT NULL,
+  updated_by int(11) DEFAULT NULL,
+  created_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  updated_at timestamp NOT NULL DEFAULT current_timestamp(),
+  doctor_id int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+ALTER TABLE patient_medical_history
+  ADD PRIMARY KEY (id);
+
+
+
+ALTER TABLE patient_medical_history
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+COMMIT;
+
+
+
+
+--2 New tables added to the DB (patient_teeths || tooth_issues) Dated 26/June/2024
+
+
+CREATE TABLE `patient_teeths` (
+  `id` int(11) NOT NULL,
+  `patient_id` int(11) DEFAULT NULL,
+  `doctor_id` int(11) DEFAULT NULL,
+  `tooth_number` varchar(10) NOT NULL,
+  `tooth_condition` varchar(50) DEFAULT NULL,
+  `treatment_plan` text DEFAULT NULL,
+  `severity` varchar(20) DEFAULT NULL,
+  `procedure_performed` text DEFAULT NULL,
+  `tooth_position` varchar(50) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+CREATE TABLE `tooth_issues` (
+  `id` int(11) NOT NULL,
+  `p_teeth_id` int(11) DEFAULT NULL,
+  `tooth_number` varchar(255) DEFAULT NULL,
+  `tooth_issue` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+ALTER TABLE patient_details Table added to the DB 27/June/2024.
+
+
+ALTER TABLE patient_details
+ADD COLUMN city VARCHAR(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+ADD COLUMN area VARCHAR(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+ADD COLUMN enquirysource INT DEFAULT NULL;
+
+
+ALTER TABLE enquiry_sources Table added to the DB 27/June/2024.
+
+CREATE TABLE enquiry_sources (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    source_name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_by INT(11) DEFAULT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT(11) DEFAULT NULL
+);
+
+
+--A new Table teeth_procedures added to the DB 28/June/2024.
+
+
+CREATE TABLE teeth_procedures (
+  id int(11) NOT NULL,
+  patient_id int(11) DEFAULT NULL,
+  doctor_id int(11) DEFAULT NULL,
+  comments text DEFAULT NULL,
+  status varchar(20) DEFAULT NULL,
+  created_by int(11) DEFAULT NULL,
+  created_at timestamp NOT NULL DEFAULT current_timestamp(),
+  updated_by int(11) DEFAULT NULL,
+  updated_at timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+)
+
+ALTER TABLE teeth_procedures
+  ADD PRIMARY KEY (id);
+
+ALTER TABLE teeth_procedures
+  MODIFY id int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE teeth_procedures ADD pr_number VARCHAR(20) NULL AFTER id;
+
+
+--A new Table patient_drug_histories  added to the DB 30/june/2024.
+
+CREATE TABLE `patient_drug_histories` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `patient_id` int(11) NOT NULL,
+    `dd_drug_history_id` int(11) NOT NULL,
+    `doctor_id` int(11) NOT NULL,
+    `comments` text COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `created_by` int(11) DEFAULT NULL,
+    `updated_by` int(11) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+--A new Table patient_dental_histories  added to the DB 30/june/2024.
+
+CREATE TABLE `patient_dental_histories` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `patient_id` int(11) NOT NULL,
+  `dd_medical_history_id` int(11) NOT NULL,
+  `doctor_id` int(11) NOT NULL,
+  `comments` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+--A new Table patient_social_histories  added to the DB o2/July/2024.
+
+CREATE TABLE `patient_social_histories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `patient_id` int(11) NOT NULL,
+  `dd_medical_history_id` int(11) NOT NULL,
+  `doctor_id` int(11) NOT NULL,
+  `comments` text COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+--A new Table patient_medical_histories  added to the DB o2/July/2024.
+
+CREATE TABLE patient_medical_histories (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    patient_id INT(11) NOT NULL,
+    dd_medical_history_id INT(11) NOT NULL,
+    doctor_id INT(11) NOT NULL,
+    comments TEXT COLLATE utf8mb4_general_ci NULL,
+    created_at DATETIME NULL DEFAULT current_timestamp(),
+    updated_at DATETIME NULL DEFAULT NULL ON UPDATE current_timestamp(),
+    created_by INT(11) NULL,
+    updated_by INT(11) NULL,
+    PRIMARY KEY (id)
+);
+CREATE TABLE enquiry_sources (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    source_name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_by INT(11) DEFAULT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT(11) DEFAULT NULL
+);
+
+CREATE TABLE `procedure1` (
+  `id` int(11) NOT NULL,
+  `title` text NOT NULL,
+  `desc` longtext NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_by` int(11) NOT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `sr_no` int(11) NOT NULL,
+  `procedure_code` int(11) NOT NULL,
+  `price` int(11) NOT NULL,
+  `dd_procedure_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+ALTER TABLE dental_procedure
+RENAME TO dd_procedure;
+ALTER TABLE dd_procedure
+RENAME TO dd_procedures;
+
+
+
+-- A new Field of teeth_procedures_id added in Table patient_teeths 2/7/24.
+
+ALTER TABLE patient_teeths ADD teeth_procedures_id INT(10) NULL AFTER id;
+
+
+-- A new Field of credit_balance added in Table patient_details 3/7/24.
+
+
+ALTER TABLE patient_details
+ADD COLUMN credit_balance DECIMAL(10, 2) DEFAULT 0.00 AFTER cnic;
+
+-- A field renamed in patient_dental_histories 3/7/24.
+
+ALTER TABLE `patient_dental_histories` CHANGE `dd_medical_history_id` `dd_dental_history_id` INT(11) NOT NULL;
+
+
+
+-- 2 new fields added in the files Table 3/June/2024.
+
+ALTER TABLE `files` ADD `child_table_name` VARCHAR(255) NULL DEFAULT NULL AFTER `table_name`;
+
+ALTER TABLE `files` ADD `child_record_id` INT(11) NULL DEFAULT NULL AFTER `record_id`;
+
+
+CREATE TABLE patient_treatment_plans (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  patient_id int(11) NOT NULL,
+  dd_procedure_id int(11) DEFAULT NULL,
+  user_id int(11) DEFAULT NULL,
+  comments longtext DEFAULT NULL,
+  status enum('1','0') DEFAULT '1',
+  created_by int(11) DEFAULT NULL,
+  updated_by int(11) DEFAULT NULL,
+  created_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  updated_at timestamp NOT NULL DEFAULT current_timestamp(),
+  doctor_id int(11) NOT NULL,
+  tooth_id int(11) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+ALTER TABLE patient_treatment_plans ADD teeth_procedure_id INT(11) NULL DEFAULT NULL;
+
+
+CREATE TABLE patient_treatment_process (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  patient_treatment_plan_id int(11) NOT NULL,
+  comments longtext DEFAULT NULL,
+  status enum('1','0') DEFAULT '1',
+  created_by int(11) DEFAULT NULL,
+  updated_by int(11) DEFAULT NULL,
+  created_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  updated_at timestamp NOT NULL DEFAULT current_timestamp(),
+  process_started_at datetime DEFAULT NULL,
+  process_completed_at datetime DEFAULT NULL,
+  doctor_id int(11) DEFAULT NULL,
+  PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+
+
+
+ALTER TABLE `patient_appointments` ADD `appointment_number` VARCHAR(25) NULL DEFAULT NULL AFTER `id`;
+
+ALTER TABLE `patient_appointments` ADD `appointment_status_id` INT(11) NULL AFTER `doctor_id`;
+
+
+ALTER TABLE invoices
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+
+ALTER TABLE account_headers
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+
+ALTER TABLE application_settings
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+
+ALTER TABLE companies
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+ALTER TABLE contact_us
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+ALTER TABLE lab_reports
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+ALTER TABLE email_templates
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+ALTER TABLE currencies
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+ALTER TABLE courses
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+ALTER TABLE dental
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+ALTER TABLE email_campaign_logs
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+ALTER TABLE insurances
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+ALTER TABLE prescriptions
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+ALTER TABLE patient_appointments
+    ADD COLUMN created_by INT(11) DEFAULT NULL,
+    ADD COLUMN updated_by INT(11) DEFAULT NULL;
+
+
+
+-- A new Table Added to the DB. 5/7/24
+CREATE TABLE `test_files` (
+  `id` int(11) NOT NULL,
+  `pr_number` varchar(20) DEFAULT NULL,
+  `patient_id` int(11) DEFAULT NULL,
+  `doctor_id` int(11) DEFAULT NULL,
+  `comments` text DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+ALTER TABLE `test_files`
+  ADD PRIMARY KEY (`id`);
+
+
+ALTER TABLE `test_files`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+
+
+-- A new Field added in Table teeth_procedures (patient_appointment_id) 6/7/24
+
+ALTER TABLE `teeth_procedures` ADD `patient_appointment_id` INT(10) NULL DEFAULT NULL AFTER `patient_id`;
+
+
+
+-- 4 New Tables Added in the DB. For prescriptions Module:
+CREATE TABLE patient_medicine_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    prescription_id INT NOT NULL,
+    medicine_id INT NOT NULL,
+    medicine_type_id INT NULL,
+    instruction TEXT NULL,
+    day varchar(50) NULL,
+    status INT NULL,
+    created_by INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INT DEFAULT NULL,
+    updated_at TIMESTAMP NUll ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE patient_diagnosis_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    prescription_id INT NOT NULL,
+    diagnosis_id INT NOT NULL,
+    instruction TEXT NULL,
+    status varchar(50) NULL,
+    created_by INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INT DEFAULT NULL,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE `dd_medicines` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `status` int(11) DEFAULT NULL,
+  `dd_medicine_type` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `dd_medicines`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_medicines`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+
+
+CREATE TABLE `dd_diagnoses` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `status` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+ALTER TABLE `dd_diagnoses`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `dd_diagnoses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+-----marital-statuses 08-jul-24
+  ALTER TABLE `marital_statuses` CHANGE `status` `status` ENUM('0','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '1';
+
+
+ALTER TABLE `dd_medicine_types` ADD `description` VARCHAR(255) NOT NULL AFTER `name`;
+
+ALTER TABLE `prescriptions` CHANGE `weight` `prs_number` VARCHAR(25) NULL DEFAULT NULL;
+
+CREATE TABLE `patient_treatment_plan_procedures` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `patient_treatment_plan_id` int(11) NOT NULL,
+  `status` enum('1','0') DEFAULT '0',
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `tooth_number` int(11) DEFAULT NULL,
+  `teeth_procedure_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `prescriptions` CHANGE `teeth_procedures_id` `teeth_procedure_id` VARCHAR(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;
+
+
+
+--
+Table Dropped and the Added Again patient_treatment_plans 11/7/24
+
+Drop Table patient_treatment_plans;
+
+
+CREATE TABLE patient_treatment_plans (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    patient_id INT(11) NOT NULL,
+    teeth_procedure_id INT(11) DEFAULT NULL,
+    doctor_id INT(11) NOT NULL,
+    comments LONGTEXT  NULL,
+    status int  DEFAULT '1',
+    created_by INT(11)  NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+    updated_by INT(11)  NULL,
+    updated_at TIMESTAMP  NULL ON UPDATE current_timestamp(),
+    PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+-- A Field modified in patient_treatment_plan_procedures 11/7/24.
+
+ALTER TABLE `patient_treatment_plan_procedures` CHANGE `status` `status` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
+
+
+
+
+CREATE TABLE `dd_task_types` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `description` text COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `status` enum('0', '1') COLLATE utf8mb4_general_ci DEFAULT '1',
+    `created_by` int(11) NOT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    `updated_by` int(11) DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+CREATE TABLE `dd_task_status` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `description` text COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `status` enum('0', '1') COLLATE utf8mb4_general_ci DEFAULT '1',
+    `created_by` int(11) NOT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    `updated_by` int(11) DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `dd_task_priorities` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `description` text COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `status` enum('0', '1') COLLATE utf8mb4_general_ci DEFAULT '1',
+    `created_by` int(11) NOT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    `updated_by` int(11) DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `dd_task_actions` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `description` text COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `status` enum('0', '1') COLLATE utf8mb4_general_ci DEFAULT '1',
+    `created_by` int(11) NOT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    `updated_by` int(11) DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+
+CREATE TABLE tasks (
+    id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    assign_to BIGINT(20) UNSIGNED NOT NULL,
+    assign_by BIGINT(20) UNSIGNED NOT NULL,
+    title VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    description TEXT COLLATE utf8mb4_general_ci,
+    due_date DATE,
+    task_action_id INT(11),
+    task_type_id INT(11),
+    task_priority_id INT(11) NOT NULL,
+    task_status_id INT(11),
+    status ENUM('0', '1') DEFAULT '1',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT(11),
+    updated_by INT(11)
+);
+
+
+
+CREATE TABLE chats (
+    id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    task_id bigint(20) UNSIGNED NOT NULL,
+    user_id bigint(20) UNSIGNED NOT NULL,
+    message text COLLATE utf8mb4_general_ci NOT NULL,
+  `status` enum('1','0') DEFAULT '1',
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+);
+
+CREATE TABLE task_notifications (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    assign_by INT(11) NOT NULL,
+    assign_to  INT(11) NOT NULL,
+    text VARCHAR(500) COLLATE utf8mb4_general_ci NOT NULL,
+    url VARCHAR(200) COLLATE utf8mb4_general_ci NOT NULL,
+    status VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'new',
+    created_at DATETIME DEFAULT NULL,
+    updated_at DATETIME DEFAULT NULL,
+    created_by INT(11) DEFAULT NULL,
+    updated_by INT(10) DEFAULT NULL
+);
+--A new Field treatment_plan_number added in patient_treatment_plans 12/7/2024
+
+
+ALTER TABLE patient_treatment_plans ADD treatment_plan_number VARCHAR(30) NULL DEFAULT NULL AFTER id;
+
+
+--2 new Fields added ro the table patient_treatment_plan_procedures (Checkboxes).   13/7/24
+
+ALTER TABLE `patient_treatment_plan_procedures` ADD `is_procedure_started` VARCHAR(30) NULL
+DEFAULT NULL AFTER `status`, ADD `is_procedure_finished` VARCHAR(30) NULL DEFAULT NULL
+AFTER `is_procedure_started`;
+
+
+ALTER TABLE `patient_treatment_plan_procedures` CHANGE `is_procedure_started` `is_procedure_started`
+VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'no';
+
+
+ALTER TABLE `patient_treatment_plan_procedures` CHANGE `is_procedure_finished` `is_procedure_finished`
+VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'no';
+
+--A new Field Added in invoices table.
+
+
+ALTER TABLE `invoices` ADD `patient_treatment_plan_id` INT(11) NULL DEFAULT NULL AFTER `insurance_id`;
+
+
+
+CREATE TABLE emails (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    recipient VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    body TEXT NOT NULL,
+   `status` varchar(20) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+);
+
+
+
+
+-- Queries related to teeth_procedures conversion to exam_investigations..
+
+RENAME TABLE teeth_procedures TO exam_investigations;
+ALTER TABLE `exam_investigations` CHANGE `pr_number` `examination_number` VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
+ALTER TABLE `patient_teeths` CHANGE `teeth_procedures_id` `examination_id` INT(10) NULL DEFAULT NULL;
+ALTER TABLE `patient_treatment_plans` CHANGE `teeth_procedure_id` `examination_id` INT(11) NULL DEFAULT NULL;
+ALTER TABLE patient_treatment_plan_procedures CHANGE teeth_procedure_id dd_procedure_id INT(11) NULL DEFAULT NULL;
+ALTER TABLE prescriptions ADD examination_id INT(10) NULL DEFAULT NULL AFTER user_id;
+
+
+--A new table added to the db named invoice_payments 16/7/24
+
+CREATE TABLE invoice_payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    insurance_id INT NULL,
+    paid_amount DECIMAL(10, 2) NOT NULL,
+    payment_type VARCHAR(50) NOT NULL,
+    comments TEXT,
+    status VARCHAR(50) NULL,
+    created_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INT NULL,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- Drop Table dd-examinaations And add new One
+
+DROP TABLE dd_examinations;
+
+
+CREATE TABLE `dd_examinations` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '1',
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+ALTER TABLE `dd_examinations`
+  ADD PRIMARY KEY (`id`);
+
+--
+ALTER TABLE `dd_examinations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+COMMIT;
+
+
+--inventories table added to the db 20/7/24
+
+CREATE TABLE `inventories` (
+  `id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  `subcategory_id` int(11) NOT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `unit_cost` decimal(10,2) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `inventories`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `inventories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+COMMIT;
+
+
+-- A new field of invoice_number added to the invoices Table 20/7/24
+
+ALTER TABLE `invoices` ADD `invoice_number` VARCHAR(30) NULL DEFAULT NULL AFTER `id`;
+
+ALTER TABLE `doctor_details` CHANGE `hospital_department_id` `hospital_department_id` BIGINT(20) UNSIGNED NULL;
+
+
+
+
+--Drop Old invoice_items and add this new Table 25/7/24
+
+
+CREATE TABLE `invoice_items` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `company_id` bigint(20) UNSIGNED NOT NULL,
+  `invoice_id` bigint(20) UNSIGNED NOT NULL,
+  `procedure_id` int(11) DEFAULT NULL,
+  `title` varchar(100) DEFAULT NULL,
+  `account_name` varchar(255) NOT NULL,
+  `account_type` enum('Debit','Credit') NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` double NOT NULL,
+  `discount_pct` int(11) DEFAULT NULL,
+  `total` double NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+ALTER TABLE `invoice_items`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `invoice_items`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+COMMIT;
+
+ALTER TABLE `invoice_items` CHANGE `id` `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
+ALTER TABLE `invoices` CHANGE `company_id` `company_id` BIGINT(20) UNSIGNED NULL;
+
+ALTER TABLE `invoice_items` ADD `doctor_id` INT(25) NULL AFTER `invoice_id`;
+
+
+CREATE TABLE attendances (
+    id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT(20) UNSIGNED NOT NULL,
+    checked_in TIMESTAMP NULL DEFAULT NULL,
+    checked_out TIMESTAMP NULL DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by INT(11) NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT(11) NULL DEFAULT NULL,
+    status TINYINT(1) NULL DEFAULT 0
+);
+ALTER TABLE `inventories` CHANGE `subcategory_id` `supplier` TEXT NOT NULL;
+
+
+
+CREATE TABLE inventory_usages (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    inventory_id BIGINT UNSIGNED NOT NULL,
+    consume_quantity INT NOT NULL,
+    date DATE NOT NULL,
+    created_by INT(11) NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT(11) NULL DEFAULT NULL
+    FOREIGN KEY (inventory_id) REFERENCES inventories(id) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE `items` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `category_id` INT(11) NOT NULL,
+    `date` DATE DEFAULT NULL,
+    `title` VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `description` TEXT COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `item_code` VARCHAR(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `quantity` INT(11) DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+    `updated_by` INT(11) DEFAULT NULL,
+    `created_by` INT(11) DEFAULT NULL,
+    `status` VARCHAR(20) COLLATE utf8mb4_general_ci DEFAULT '1',
+    PRIMARY KEY (`id`),
+    INDEX `item_code_index` (`item_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `categories` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `description` TEXT COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+    `updated_by` INT(11) DEFAULT NULL,
+    `created_by` INT(11) DEFAULT NULL,
+    `status` VARCHAR(20) COLLATE utf8mb4_general_ci DEFAULT 'active',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+ALTER TABLE `inventory_usages` CHANGE `consumed_quantity` `consumed_quantity` INT(11) NULL;
+ALTER TABLE inventory_usages
+ADD COLUMN supplier VARCHAR(255) NULL;
+ALTER TABLE `dd_procedures` CHANGE `procedure_code` `procedure_code` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL;
+
+ALTER TABLE `inventories` ADD `purchased_qty` INT(11) NULL AFTER `quantity`;
